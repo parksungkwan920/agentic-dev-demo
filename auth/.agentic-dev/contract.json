@@ -11,7 +11,7 @@
   "commands": {
     "build": "python3 -m compileall -q server",
     "proof": "python3 proof/run_proof.py",
-    "deploy_dev": "echo 'DEV 부팅(데모): 로컬 인프로세스 — compose/운영계 미접근'",
+    "deploy_dev": "echo 'DEV 부팅(데모): 로컬 인프로세스: compose/운영계 미접근'",
     "verify_dev": "python3 sdd/99_toolchain/01_automation/run_ui_parity.py"
   },
   "artifacts": {
