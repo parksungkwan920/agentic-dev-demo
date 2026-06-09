@@ -3,6 +3,30 @@
 > build 단계가 끝난 현재 구현 상태를 기록합니다. 각 컨텍스트는 domain·application·
 > infrastructure·web 네 레이어로 분리되어 있습니다. 이 지도는 다음 작업자가 코드를
 > 다시 읽지 않고도 무엇이 어디에 있는지 알 수 있게 합니다.
+>
+> 아래 "API 표면"과 "모듈 구조"는 완성본(reference target)을 기술합니다. 이 learning
+> 워크스페이스의 실제 진행 현황은 바로 아래 "현재 구현 현황" 절에 정직하게 분리해 기록합니다.
+
+## 현재 구현 현황 (learning 워크스페이스 · STEP 2)
+
+STEP 2 에서는 shop_todos.md 의 도메인 구역을 구현했습니다. 현재 실제로 소스에 존재하는 범위는 다음과 같습니다.
+
+- 공유 커널(shared)을 구현했습니다. `Money`, `ErrorCode`, `DomainException`, `Page` 가 존재합니다.
+- catalog 컨텍스트의 도메인·인프라·응용을 구현했습니다. `Product`, `ProductStatus`, `ProductRepository`(port), `InMemoryProductRepository`, `CatalogService` 가 존재합니다.
+- inventory 컨텍스트의 도메인·인프라·응용을 구현했습니다. `Reservation`, `ReservationStatus`, `ReservationRepository`(port), `InMemoryReservationRepository`, `InventoryService` 가 존재합니다. reserve 는 synchronized 로 직렬화해 동시 예약 oversell 을 막습니다.
+- ordering 컨텍스트의 도메인을 구현했습니다. `Order`, `OrderLine`, `OrderStatus`, `OrderRepository`(port) 가 존재합니다.
+- cart 컨텍스트의 도메인을 구현했습니다. `Cart`, `CartRepository`(port) 가 존재합니다.
+- payment 컨텍스트의 도메인을 구현했습니다. `Payment`, `PaymentStatus`, `PaymentGateway`(port), `PaymentRepository`(port) 가 존재합니다.
+
+아직 구현하지 않은(다음 빌드 청크) 범위는 다음과 같습니다.
+
+- 모든 컨텍스트의 web 계층(컨트롤러·DTO·전역 예외 핸들러)을 아직 만들지 않았습니다.
+- cart·ordering·payment 의 응용 서비스와 인메모리 어댑터를 아직 만들지 않았습니다.
+- checkout 오케스트레이션(체크아웃·취소 보상)을 아직 만들지 않았습니다.
+- `ShopApplication` 진입점과 `DemoPaymentGateway` 어댑터를 아직 만들지 않았습니다.
+- 그래서 E2E 9개는 아직 실행 대상이 아닙니다. 14개 도메인 단위 테스트만 green 입니다.
+
+검증 증거는 `04_verify/01_feature/shop.md` 의 "STEP 2 검증" 절을 참고합니다.
 
 ## 모듈 구조 (모놀리식 · DDD)
 

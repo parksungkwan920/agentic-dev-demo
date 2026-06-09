@@ -46,11 +46,27 @@
 > AC-2 연체 시 거부를 그대로 지켜줘. migration.properties 의 module.loans 를
 > new 로 바꿔서 세 모듈을 모두 신규로 전환해줘.
 
-확인:
+확인 — 구조 게이트 → 행위 채점기 → **전환 완료 게이트** 순서로 실행합니다:
+
 ```bash
+# 1. 전환 상태: 세 모듈이 모두 new 인지 확인
 python3 sdd/99_toolchain/01_automation/run_strangler_check.py   # 전환 3/3
-./lab.sh verify                                                 # 전부 new, 수용기준 green
+
+# 2. 행위 채점기: 전환 전·후 공통 수용기준 (LibraryAcceptanceTest 3개)
+./lab.sh verify
+
+# 3. 전환 완료 게이트: 신규 구현 빈 등록 + all-new 경로 AC-1·AC-2 (AllNewModeTest 4개)
+#    세 모듈이 모두 전환될 때까지 이 테스트는 RED 입니다.
+./gradlew test --tests 'kr.elice.library.acceptance.AllNewModeTest'
 ```
+
+`AllNewModeTest` 에서 확인하는 것:
+- `allNewBeansRegistered`: `newBookService`·`newMemberService`·`newLoanService` 빈이 모두 등록됐는지
+- `newLoanUsesCatalogRouter`: NewLoanService → CatalogRouter → NewBook/MemberService 크로스모듈 경로가 동작하는지
+- `ac1_loanLimitEnforcedByNewImpl`: 신규 구현에서도 한도 5권이 지켜지는지
+- `ac2_overdueBlocksEnforcedByNewImpl`: 신규 구현에서도 연체 거부가 지켜지는지
+
+세 단계 확인이 모두 GREEN 이면 strangler 전환이 완료된 것입니다.
 
 ## 멱등 재실행
 

@@ -3,6 +3,15 @@
 > EARS 명세를 구현 가능한 작업 단위로 분해합니다. Execution Checklist 의 각 구역은
 > 서로 의존성이 낮아 병렬로 잡을 수 있습니다. 구역 하나가 대략 PR 하나에 대응됩니다.
 
+## 현재 진행 노트 (learning 워크스페이스)
+
+아래 Execution Checklist 의 `[x]` 표시는 완성본 기준입니다. 이 learning 워크스페이스는
+실습용 init 상태로 시작했고(main 소스 비어 있음, 테스트만 존재), 단계별로 다시 구현합니다.
+
+- STEP 2 에서 도메인 구역(구역 1 공유 커널, 구역 2~6 의 도메인 계층 + 단위 테스트가 직접 쓰는 CatalogService·InventoryService 와 catalog·inventory 인메모리 어댑터)을 구현했습니다. 14개 도메인 단위 테스트가 green 입니다.
+- 다음 청크에서 web 계층, cart·ordering·payment 응용/인프라, checkout 오케스트레이션, ShopApplication, DemoPaymentGateway 를 구현해 E2E 9개를 green 으로 만듭니다.
+- 빌드/검증 현재 상태는 `03_build/01_feature/shop.md` 와 `04_verify/01_feature/shop.md` 의 STEP 2 절에 기록했습니다.
+
 ## Acceptance Criteria 체크리스트
 
 | AC | 설명 | 테스트 |
