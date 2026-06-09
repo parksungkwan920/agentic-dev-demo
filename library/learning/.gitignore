@@ -10,3 +10,10 @@ bin/
 
 # OS
 .DS_Store
+
+# 실습 중 생성기가 만드는 산출물 (gen_strangler_spec.py / gen_proof_evidence.py)
+# 시작 상태는 비어 있고, 실습 중 생성되며, ./lab.sh reset 으로 정리됩니다.
+sdd/01_planning/01_feature/book.md
+sdd/01_planning/01_feature/member.md
+sdd/01_planning/01_feature/loan.md
+sdd/04_verify/10_test/proof_evidence.md

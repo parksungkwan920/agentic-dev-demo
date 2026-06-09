@@ -81,8 +81,13 @@ def render(classes: list[dict]) -> str:
     total_fail = sum(c["failures"] + c["errors"] for c in classes)
 
     status_line = "BUILD SUCCESSFUL" if total_fail == 0 else "BUILD FAILED"
-    unit_classes  = [c for c in classes if "E2E" not in c["short"] and "Acceptance" not in c["short"]]
-    e2e_classes   = [c for c in classes if "E2E" in c["short"] or "Acceptance" in c["short"]]
+    # 통합/E2E 여부는 짧은 이름이 아니라 전체 패키지명으로 판정합니다. acceptance·e2e 패키지의
+    # @SpringBootTest 는 모두 통합 테스트입니다(AllNewModeTest 가 단위로 잘못 분류되지 않게).
+    def _is_integration(c):
+        name = c["classname"].lower()
+        return "e2e" in name or "acceptance" in name
+    e2e_classes  = [c for c in classes if _is_integration(c)]
+    unit_classes = [c for c in classes if not _is_integration(c)]
 
     lines: list[str] = []
     lines += [
