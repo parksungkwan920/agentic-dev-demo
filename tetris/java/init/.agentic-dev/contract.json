@@ -1,0 +1,10 @@
+{
+  "feature": "tetris-line-clear",
+  "commands": {
+    "build": "./gradlew build -x test",
+    "proof": "./gradlew test",
+    "deploy_dev": "echo 'DEV(데모): 로컬 게이트만, 배포 없음'",
+    "verify_dev": "./gradlew test"
+  },
+  "notes": ["proof = ./gradlew test 결정적 게이트. AC-3(줄 삭제)·AC-4(다중 삭제) 통과가 완료 기준."]
+}

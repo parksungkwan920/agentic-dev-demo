@@ -1,0 +1,2 @@
+# 도메인 코드는 표준 라이브러리만 씁니다. pytest 는 tests/ 실행에만 필요(run_proof.py 는 불필요).
+pytest>=8.0

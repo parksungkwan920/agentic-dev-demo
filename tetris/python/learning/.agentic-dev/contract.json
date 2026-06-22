@@ -1,0 +1,10 @@
+{
+  "feature": "tetris-line-clear",
+  "commands": {
+    "build": "python3 -m compileall -q tetris",
+    "proof": "python3 run_proof.py",
+    "deploy_dev": "echo 'DEV(데모): 로컬 게이트만, 배포 없음'",
+    "verify_dev": "python3 run_proof.py"
+  },
+  "notes": ["proof = python3 run_proof.py 결정적 게이트(표준 라이브러리만). AC-3·AC-4 통과가 완료 기준. pytest도 tests/로 제공."]
+}

@@ -1,0 +1,21 @@
+// 테트리스 줄 삭제 규칙(AC-3·AC-4) 핸즈온. 외부 의존 없이 JDK 17 + Gradle Wrapper로
+// 바로 빌드·테스트됩니다. 명세(sdd/01_planning/tetris_spec.md)를 통과하는 테스트로 못 박습니다.
+plugins {
+    id 'java'
+}
+
+group = 'com.datasense'
+version = '1.0.0'
+
+java {
+    toolchain { languageVersion = JavaLanguageVersion.of(17) }
+}
+
+repositories { mavenCentral() }
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+tasks.named('test') { useJUnitPlatform() }
