@@ -1,2 +1,5 @@
 target/
 *.class
+
+# 로컬 절대경로(JDK 17 위치)를 담아 환경마다 다르므로 커밋하지 않는다
+gradle.properties
