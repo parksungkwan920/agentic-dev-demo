@@ -1,0 +1,130 @@
+# -*- coding: utf-8 -*-
+"""signup_otp 화면 미리보기 HTML 생성.
+
+server.contexts.auth.screens.render("signup_otp") 출력을 그대로 임베드해
+캐노니컬 스냅샷과 동일한 화면을 브라우저에서 본다. 주변 UI/JS는 미리보기 전용
+데모로, OTP 규칙(6자리·5회 잠금·300초 만료)은 구현(otp.py)을 그대로 따른다.
+"""
+import pathlib
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from server.contexts.auth import screens  # noqa: E402
+
+FRAGMENT = screens.render("signup_otp")  # 스냅샷과 동일한 <main> 프래그먼트
+
+PAGE = """<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>회원가입 OTP · signup_otp</title>
+<style>
+  :root { --bg:#0f172a; --card:#ffffff; --line:#e2e8f0; --muted:#64748b;
+          --brand:#2563eb; --ok:#16a34a; --err:#dc2626; --warn:#d97706; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
+         background:linear-gradient(160deg,#1e293b,#0f172a); font-family:"Malgun Gothic",system-ui,sans-serif;
+         color:#0f172a; padding:24px; }
+  .wrap { width:100%; max-width:420px; }
+  .badge { color:#cbd5e1; font-size:12px; letter-spacing:.04em; margin-bottom:10px; text-align:center; }
+  .card { background:var(--card); border-radius:16px; padding:28px 24px;
+          box-shadow:0 20px 60px rgba(0,0,0,.35); }
+  /* 렌더된 프래그먼트(.signup) 스타일 */
+  .signup h1 { font-size:22px; margin:0 0 8px; }
+  .signup p { margin:0 0 18px; color:var(--muted); font-size:14px; line-height:1.5; }
+  .signup input { width:100%; padding:14px 16px; font-size:24px; letter-spacing:.4em; text-align:center;
+                  border:1px solid var(--line); border-radius:10px; outline:none; }
+  .signup input:focus { border-color:var(--brand); box-shadow:0 0 0 3px rgba(37,99,235,.15); }
+  .signup button { width:100%; margin-top:14px; padding:14px; font-size:16px; font-weight:600;
+                   color:#fff; background:var(--brand); border:none; border-radius:10px; cursor:pointer; }
+  .signup button:disabled { background:#94a3b8; cursor:not-allowed; }
+  /* 미리보기 데모 패널 */
+  .demo { margin-top:18px; padding-top:18px; border-top:1px dashed var(--line); }
+  .demo .row { display:flex; gap:8px; align-items:center; }
+  .demo button.ghost { flex:0 0 auto; padding:10px 12px; font-size:13px; font-weight:600;
+                       color:var(--brand); background:#eff6ff; border:1px solid #dbeafe; border-radius:8px; cursor:pointer; }
+  .demo .hint { font-size:13px; color:var(--muted); margin:10px 0 0; }
+  .demo code { background:#f1f5f9; padding:2px 6px; border-radius:6px; }
+  .status { margin-top:12px; font-size:14px; font-weight:600; min-height:20px; }
+  .status.ok { color:var(--ok); } .status.err { color:var(--err); } .status.warn { color:var(--warn); }
+  .meta { margin-top:6px; font-size:12px; color:var(--muted); }
+  .note { color:#94a3b8; font-size:11px; text-align:center; margin-top:14px; line-height:1.6; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="badge">SCREEN · signup_otp · UI parity 대상</div>
+    <div class="card">
+      __FRAGMENT__
+      <div class="demo">
+        <div class="row">
+          <button class="ghost" id="issueBtn" type="button">인증번호 발급</button>
+          <span class="hint" id="issued">발급 버튼을 누르면 데모 OTP가 표시됩니다.</span>
+        </div>
+        <div class="status" id="status"></div>
+        <div class="meta" id="meta"></div>
+      </div>
+    </div>
+    <p class="note">
+      위 <code>&lt;main class="signup"&gt;</code> 영역은 screens.render("signup_otp") 출력 그대로(스냅샷 동일).<br/>
+      아래 발급/검증 동작은 미리보기 전용 데모이며 규칙은 구현(otp.py)과 동일: 6자리 · 5회 오답 잠금 · 300초 만료.
+    </p>
+  </div>
+
+<script>
+// otp.py 규칙을 그대로 옮긴 클라이언트 데모(서버 미기동 환경용 미리보기).
+const TTL_MS = 300 * 1000, MAX_ATTEMPTS = 5;
+let rec = null; // { code, issued, attempts, locked }
+
+const $ = (id) => document.getElementById(id);
+const input = document.querySelector('.signup input[name="otp"]');
+const submit = document.querySelector('.signup button[type="submit"]');
+const status = $('status'), meta = $('meta'), issued = $('issued');
+
+function setStatus(msg, cls) { status.className = 'status ' + (cls||''); status.textContent = msg; }
+
+function issue() {
+  const code = String(Math.floor(Math.random()*1000000)).padStart(6,'0');
+  rec = { code, issued: Date.now(), attempts: 0, locked: false };
+  issued.innerHTML = '데모 OTP: <code>' + code + '</code> (이메일로 받았다고 가정)';
+  setStatus('인증번호가 발급되었습니다. 5분 내 입력하세요.', 'ok');
+  tick();
+}
+
+function verify() {
+  if (!rec) { setStatus('먼저 인증번호를 발급하세요. (no_otp)', 'err'); return; }
+  if (rec.locked) { setStatus('잠김: 5회 오답으로 잠겼습니다. 재발급이 필요합니다. (locked)', 'err'); return; }
+  if (Date.now() - rec.issued > TTL_MS) { setStatus('만료: 유효시간(300초)이 지났습니다. (expired)', 'err'); return; }
+  const code = (input.value || '').trim();
+  if (code !== rec.code) {
+    rec.attempts += 1;
+    if (rec.attempts >= MAX_ATTEMPTS) { rec.locked = true; setStatus('잠김: 5회 연속 오답. (locked)', 'err'); }
+    else setStatus('인증번호가 일치하지 않습니다. (wrong_code · ' + rec.attempts + '/' + MAX_ATTEMPTS + ')', 'warn');
+    tick(); return;
+  }
+  setStatus('✓ 인증 성공 — 계정이 생성되었습니다. (verified → created)', 'ok');
+  tick();
+}
+
+function tick() {
+  if (!rec) { meta.textContent = ''; return; }
+  const left = Math.max(0, Math.ceil((TTL_MS - (Date.now() - rec.issued)) / 1000));
+  meta.textContent = rec.locked ? '상태: locked' : ('남은 시간: ' + left + 's · 시도: ' + rec.attempts + '/' + MAX_ATTEMPTS);
+  if (!rec.locked && left > 0) requestAnimationFrame(() => setTimeout(tick, 250));
+}
+
+$('issueBtn').addEventListener('click', issue);
+submit.addEventListener('click', (e) => { e.preventDefault(); verify(); });
+input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); verify(); } });
+</script>
+</body>
+</html>
+"""
+
+OUT = pathlib.Path(__file__).resolve().parent / "signup_otp_preview.html"
+OUT.write_text(PAGE.replace("__FRAGMENT__", FRAGMENT), encoding="utf-8")
+print(f"미리보기 생성: {OUT}")
+print(f"임베드 프래그먼트 == 스냅샷 render: {FRAGMENT == screens.render('signup_otp')}")
