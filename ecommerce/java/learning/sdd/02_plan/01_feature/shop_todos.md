@@ -9,8 +9,9 @@
 실습용 init 상태로 시작했고(main 소스 비어 있음, 테스트만 존재), 단계별로 다시 구현합니다.
 
 - STEP 2 에서 도메인 구역(구역 1 공유 커널, 구역 2~6 의 도메인 계층 + 단위 테스트가 직접 쓰는 CatalogService·InventoryService 와 catalog·inventory 인메모리 어댑터)을 구현했습니다. 14개 도메인 단위 테스트가 green 입니다.
+- (build 세션 기록) 이 워크스페이스에는 한때 완성본 전체 구현(web·checkout·ShopApplication 포함 main 44개)이 커밋돼 있었습니다. 실습 의도(init→도메인 단계 구현)에 맞춰 다음 청크 파일(전 컨텍스트 web, cart·ordering·payment 응용/인프라, checkout, ShopApplication, DemoPaymentGateway, ApiExceptionHandler) 20개를 제거해 도메인 구역 24개만 남기는 STEP 2 베이스라인으로 되돌렸습니다. 도메인 코드는 명세·테스트에 이미 부합했으므로 재작성 없이 그대로 두고 검증했습니다.
 - 다음 청크에서 web 계층, cart·ordering·payment 응용/인프라, checkout 오케스트레이션, ShopApplication, DemoPaymentGateway 를 구현해 E2E 9개를 green 으로 만듭니다.
-- 빌드/검증 현재 상태는 `03_build/01_feature/shop.md` 와 `04_verify/01_feature/shop.md` 의 STEP 2 절에 기록했습니다.
+- 빌드/검증 현재 상태는 `03_build/01_feature/shop.md` 와 `04_verify/01_feature/shop.md` 의 STEP 2 절에 기록했습니다. JDK 17 로 도메인 타깃 스위트를 실행해야 합니다(Spring Boot 3.5.0 플러그인은 Java 17+ 요구).
 
 ## Acceptance Criteria 체크리스트
 
