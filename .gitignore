@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+tmp/
+# 런타임에 업로드된 미니룸 영속 이미지(사용자 데이터)
+static/miniroom_uploaded.*
